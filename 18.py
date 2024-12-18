@@ -1,3 +1,4 @@
+import bisect
 import sys
 from heapq import heappop, heappush
 
@@ -49,7 +50,7 @@ class DijkstraGraph():
         return 0
 
 
-def test_input_1():
+def test_input():
     _input = """5,4
 4,2
 4,5
@@ -78,7 +79,7 @@ def test_input_1():
 """.strip().split("\n")
 
     assert part_1(_input, 12, 6) == 22
-    assert part_2(_input, 13, 6) == '6,1'
+    assert part_2(_input, 6) == '6,1'
 
 
 def read_input(path: str) -> list[str]:
@@ -95,29 +96,18 @@ def part_1(input_data: list[str], num_coords: int, max: int) -> int:
     return graph.solve()
 
 
-def part_2(input_data: list[str], num_coords: int, max: int) -> str:
+def part_2(input_data: list[str], max: int) -> str:
     coordinates = get_coordinates(input_data)
-    left, right = num_coords + 1, len(coordinates) - 1
-
-    while left <= right:
-        mid = (left + right) // 2
-        graph = DijkstraGraph(coordinates[:mid + 1], max)
-        score = graph.solve()
-
-        if score == 0:
-            right = mid - 1
-        else:
-            left = mid + 1
-
-    return f'{coordinates[left][0]},{coordinates[left][1]}'
+    index = bisect.bisect_left(range(len(coordinates)),
+                               True,
+                               key=lambda x: DijkstraGraph(coordinates[:x + 1], max).solve() == 0)
+    return f'{coordinates[index][0]},{coordinates[index][1]}'
 
 
 def main() -> None:
     input_data = read_input(sys.argv[1])
-    part1 = part_1(input_data, 1024, 70)
-    print(f'Part 1: {part1}')
-    part2 = part_2(input_data, 1025, 70)
-    print(f'Part 2: {part2}')
+    print(f'Part 1: {part_1(input_data, 1024, 70)}')
+    print(f'Part 2: {part_2(input_data, 70)}')
 
 
 if __name__ == '__main__':

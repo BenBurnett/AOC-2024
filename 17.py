@@ -42,47 +42,57 @@ class Computer:
                     self.registers['C'] = self.registers['A'] // (2**combo_operand)
 
 
-def test_1():
+def test_input_1():
     computer = Computer({'A': 0, 'B': 0, 'C': 9}, [2, 6])
     computer.run()
     assert computer.registers['B'] == 1
 
 
-def test_2():
+def test_input_2():
     computer = Computer({'A': 10, 'B': 0, 'C': 0}, [5, 0, 5, 1, 5, 4])
     computer.run()
     assert computer.output == [0, 1, 2]
 
 
-def test_3():
+def test_input_3():
     computer = Computer({'A': 2024, 'B': 0, 'C': 0}, [0, 1, 5, 4, 3, 0])
     computer.run()
     assert computer.registers['A'] == 0
     assert computer.output == [4, 2, 5, 6, 7, 7, 7, 7, 3, 1, 0]
 
 
-def test_4():
+def test_input_4():
     computer = Computer({'A': 0, 'B': 29, 'C': 0}, [1, 7])
     computer.run()
     assert computer.registers['B'] == 26
 
 
-def test_5():
+def test_input_5():
     computer = Computer({'A': 0, 'B': 2024, 'C': 43690}, [4, 0])
     computer.run()
     assert computer.registers['B'] == 44354
 
 
-def test_6():
-    computer = Computer({'A': 729, 'B': 0, 'C': 0}, [0, 1, 5, 4, 3, 0])
-    computer.run()
-    assert computer.output == [4, 6, 3, 5, 6, 3, 5, 2, 1, 0]
+def test_input_6():
+    _input = """Register A: 729
+Register B: 0
+Register C: 0
+
+Program: 0,1,5,4,3,0""".strip().split("\n")
+
+    registers, program = get_registers_and_program(_input)
+    assert part_1(registers, program) == '4,6,3,5,6,3,5,2,1,0'
 
 
-def test_7():
-    registers, program = {'A': 2024, 'B': 0, 'C': 0}, [0, 3, 5, 4, 3, 0]
-    possible = solve_for_a(0, len(program) - 1, registers, program)
-    assert min(possible) == 117440
+def test_input_7():
+    _input = """Register A: 2024
+Register B: 0
+Register C: 0
+
+Program: 0,3,5,4,3,0""".strip().split("\n")
+
+    registers, program = get_registers_and_program(_input)
+    assert part_2(registers, program) == 117440
 
 
 def read_input(path: str) -> list[str]:
@@ -120,23 +130,22 @@ def solve_for_a(a, idx, registers: dict[str, int], program: list[int]) -> list[i
     return results
 
 
-def part_1(registers: dict[str, int], program: list[int]) -> None:
+def part_1(registers: dict[str, int], program: list[int]) -> str:
     computer = Computer(registers, program)
     computer.run()
-    print(f'Part 1: {",".join(str(c) for c in computer.output)}')
+    return ",".join(str(c) for c in computer.output)
 
 
-def part_2(registers: dict[str, int], program: list[int]) -> None:
+def part_2(registers: dict[str, int], program: list[int]) -> int:
     possible = solve_for_a(0, len(program) - 1, registers, program)
-    print(f'Part 2: {min(possible)}')
+    return min(possible)
 
 
 def main() -> None:
     input_data = read_input(sys.argv[1])
     registers, program = get_registers_and_program(input_data)
-
-    part_1(registers, program)
-    part_2(registers, program)
+    print(f"Part 1: {part_1(registers, program)}")
+    print(f"Part 2: {part_2(registers, program)}")
 
 
 if __name__ == '__main__':
