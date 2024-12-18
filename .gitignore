@@ -1,4 +1,5 @@
 input.txt
+input/
 
 #ignore pycache
 __pycache__/
